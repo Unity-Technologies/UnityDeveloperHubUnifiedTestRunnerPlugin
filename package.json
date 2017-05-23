@@ -1,0 +1,60 @@
+{
+  "name": "react-typescript",
+  "version": "1.0.0",
+  "description": "react typescript starter kit",
+  "main": "index.js",
+  "scripts": {
+    "start": "webpack-dev-server --env=dev",
+    "start:electron": "webpack-dev-server --env=dev-electron",
+    "build": "webpack --env=prod",
+    "build:electron": "webpack --env=prod-electron",
+    "test": "jest"
+  },
+  "author": "Emil Møller",
+  "license": "ISC",
+  "jest": {
+    "moduleNameMapper": {
+      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/tests/__mocks__/fileMock.js",
+      "\\.(css|scss)$": "<rootDir>/tests/__mocks__/styleMock.js"
+    },
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ],
+    "transform": {
+      "\\.(ts|tsx)$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+    },
+    "testRegex": "/__tests__/.*\\.(spec)\\.(ts|tsx|js)$"
+  },
+  "devDependencies": {
+    "@types/isomorphic-fetch": "0.0.34",
+    "@types/jest": "^19.2.3",
+    "@types/node": "7.0.18",
+    "@types/react": "15.0.24",
+    "@types/react-dom": "15.5.0",
+    "@types/react-hot-loader": "3.0.1",
+    "awesome-typescript-loader": "3.1.3",
+    "css-loader": "0.28.1",
+    "enzyme": "^2.8.2",
+    "file-loader": "0.11.1",
+    "jest": "^20.0.3",
+    "node-sass": "4.5.3",
+    "react-addons-test-utils": "15.5.4",
+    "react-hot-loader": "next",
+    "sass-loader": "6.0.5",
+    "source-map-loader": "0.2.1",
+    "style-loader": "0.17.0",
+    "ts-jest": "^20.0.4",
+    "ts-loader": "2.0.3",
+    "typescript": "2.3.2",
+    "webpack": "2.5.1",
+    "webpack-dev-server": "2.4.5",
+    "webpack-merge": "4.1.0"
+  },
+  "dependencies": {
+    "react": "15.5.4",
+    "react-dom": "15.5.4",
+    "react-shadow": "2.0.2"
+  }
+}
