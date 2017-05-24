@@ -1,3 +1,3 @@
-export class AppSetting {
-    repositoryRoot: string = '~/unity/lane1'
+export class AppSettings {
+    static repositoryRoot: string = '/Users/yan/unity/lane1'
 }

@@ -21,9 +21,16 @@ export class App extends React.Component<any, {}> {
  
     private onCommandSelected(cmd: string) : void {
         console.log('Selected ' + cmd);
-        //const utr = new Utr ("~/unity/lane1", this.onUtrStdOut, this.onUtrStdErr);
+        const utr = new Utr ("~/unity/lane1", this.onUtrStdOut, this.onUtrStdErr);
+        utr.complete(cmd, App.autoCompletionDone);
         //utr.run(cmd);
     }
+
+    private static autoCompletionDone (data: Array<string>){
+        console.log('hello');
+        console.log (data);
+    }
+
     render() {
         return (
             <ShadowDOM>

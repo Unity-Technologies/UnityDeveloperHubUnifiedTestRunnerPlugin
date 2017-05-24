@@ -57,8 +57,8 @@ export class SmartComplete extends React.Component<SmartCompleteProps, any> {
             </ShadowDOM>
     }
 
-    protected onSuggestionsSelected(event: React.FormEvent<any>, data: Autosuggest.SuggestionSelectedEventData<string>): void {
-        this.props.commandSelectedCallBack(data.suggestion);
+    protected onSuggestionsSelected(event: React.FormEvent<any>, data: Autosuggest.SuggestionSelectedEventData<CommandLine>): void {
+        this.props.commandSelectedCallBack(data.suggestion.cmd);
     }
 
     protected onSuggestionsClearRequested() {
@@ -67,10 +67,10 @@ export class SmartComplete extends React.Component<SmartCompleteProps, any> {
         });
     }
 
-    protected renderSuggestion(suggestion: string): JSX.Element {
+    protected renderSuggestion(suggestion: CommandLine): JSX.Element {
         const keywords = this.state.searchedKeywords;
-        var matches = match(suggestion, keywords.join(' '));
-        var parts = parse(suggestion, matches);
+        var matches = match(suggestion.cmd, keywords.join(' '));
+        var parts = parse(suggestion.cmd, matches);
         return (
                 <span className={'suggestion-content'}>
                     <span className="name">
@@ -97,7 +97,7 @@ export class SmartComplete extends React.Component<SmartCompleteProps, any> {
         });
     }
  
-    protected getSuggestions(value: string): string[] {
+    protected getSuggestions(value: string): CommandLine[] {
         const escapedValue = escapeRegexCharacters(value.trim());
 
         if (escapedValue === '') {
@@ -114,5 +114,5 @@ export class SmartComplete extends React.Component<SmartCompleteProps, any> {
         return result;
     }
 
-    protected getSuggestionValue(suggestion: string): string { return suggestion; }
+    protected getSuggestionValue(suggestion: CommandLine): string { return suggestion.cmd; }
 }

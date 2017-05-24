@@ -1,6 +1,10 @@
-//const proc = require ('child_process')
+import * as child_process from 'child_process';
+import * as request from 'request';
+import {AppSettings} from "./AppSettings";
 
+var http = require('http');
 interface OutPutCallBack { (data: string) : void }
+interface AutocompleteCallbak { (data: Array<string>) : void }
 
 export class Utr {
     private repositoryRoot: string;
@@ -33,5 +37,23 @@ export class Utr {
         // utrProc.stderr.on('data', (data) => {
         //     this.stderr(`${data}`);
         // });
+    }
+
+    public static complete(input: string, onComplete: AutocompleteCallbak) : void {
+        var result = new Array<string> ();
+        console.log(input);
+        var autoCompleteProc = child_process.spawn ('perl', 
+            ['Tools/UnifiedTestRunner/autocomplete.pl', input],
+   	        {cwd: `${AppSettings.repositoryRoot}`}
+	    );
+
+        autoCompleteProc.stdout.on('data', (data) => {
+            console.log(data.toString());
+            onComplete(JSON.parse(data.toString()));
+        });
+
+        autoCompleteProc.stderr.on('data', (data) => {
+            console.error(data.toString());
+        });
     }
 }
