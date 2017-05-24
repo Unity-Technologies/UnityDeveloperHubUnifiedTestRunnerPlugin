@@ -41,7 +41,7 @@ export class SmartComplete extends React.Component<SmartCompleteProps, any> {
     private completionsAvalaibe(complettions: Array<string>): void {
         const suggestions : CommandLine[] = new Array<CommandLine>();
         complettions.forEach(c => {
-            suggestions.push({cmd: `${c}`} )
+            suggestions.push({cmd: this.adjustCompletionValueForInput(this.state.value, c)} )
         });
         this.setState({
             suggestions: suggestions,
@@ -65,7 +65,6 @@ export class SmartComplete extends React.Component<SmartCompleteProps, any> {
                 <div> 
                     <style>{this.style}</style>
                     <Autosuggest
-                   
                     suggestions={suggestions}
                     onSuggestionsFetchRequested={this.onSuggestionsFetchRequested.bind(this)}
                     getSuggestionValue={this.getSuggestionValue}
@@ -83,7 +82,7 @@ export class SmartComplete extends React.Component<SmartCompleteProps, any> {
             console.log('renderingParamsCompletions is true ' + this.state.value);
             this.props.commandSelectedCallBack.onCommandSelected(this.state.value + ' ' + data.suggestion.cmd);
             this.setState ({
-                value: this.adjustCompletionValueForInput(this.state.value, data.suggestion.cmd),
+                value: data.suggestion.cmd,
                 renderingParamsCompletions: false
             });
         } else {
@@ -92,11 +91,12 @@ export class SmartComplete extends React.Component<SmartCompleteProps, any> {
     }
 
     protected adjustCompletionValueForInput(value: string, completion: string) : string {
-        var result = value;
-        var parts = result.split(' ');
-        parts.pop();
-
-        return parts.join(' ') + ' ' + completion;
+        var parts = value.split(' ');
+        if (!value.endsWith('=')) {
+            parts.pop();
+            return parts.join(' ') + ' ' + completion;
+        }      
+        return parts.join(' ') + completion;
     }
 
     protected onSuggestionsClearRequested() {
