@@ -53,7 +53,11 @@
     "webpack-merge": "4.1.0"
   },
   "dependencies": {
+    "@types/react-autosuggest": "^8.0.1",
+    "autosuggest-highlight": "^3.1.0",
+    "child_process": "^1.0.2",
     "react": "15.5.4",
+    "react-autosuggest": "^9.0.1",
     "react-dom": "15.5.4",
     "react-shadow": "2.0.2"
   }

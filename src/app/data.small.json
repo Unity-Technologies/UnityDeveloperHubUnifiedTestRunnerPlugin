@@ -1,0 +1,5 @@
+[
+    {"cmd": "--suite=native"},
+    {"cmd": "--suite=native --testfilter=StringBuilder"},
+    {"cmd": "--suite=integration --testfilter=CanAdd"}
+]
