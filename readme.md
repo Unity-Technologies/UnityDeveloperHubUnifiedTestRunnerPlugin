@@ -82,6 +82,12 @@ To start a local development environment for electron run:
 $ yarn run start:electron
 ```
 
+or
+
+```shell
+$ npm run start:electron
+```
+
 To run it in the [Unity Dev Helper](https://github.com/Unity-Technologies/UnityDevHelper), run `yarn run start:electron` and open the plugin `Development View` from the Unity Dev Helper menu.
 
 ### How to run tests
