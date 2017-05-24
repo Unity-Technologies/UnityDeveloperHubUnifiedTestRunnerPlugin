@@ -25,7 +25,7 @@
     "transform": {
       "\\.(ts|tsx)$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
     },
-    "testRegex": "/__tests__/.*\\.(spec)\\.(ts|tsx|js)$"
+    "testRegex": "/__tests__/.*\\.(spec)|(test)\\.(ts|tsx|js)$"
   },
   "devDependencies": {
     "@types/isomorphic-fetch": "0.0.34",
