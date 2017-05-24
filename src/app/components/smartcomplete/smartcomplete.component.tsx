@@ -3,14 +3,14 @@ import ReactDOM = require('react-dom');
 import Autosuggest = require('react-autosuggest');
 import ShadowDOM from 'react-shadow';
 import { CommandLine } from "./../../CommandLine";
-import { Search, SuggestionMatchResult } from "./../../Search"
+import { Search } from "./../../Search"
 var match = require('autosuggest-highlight/match');
 var parse = require('autosuggest-highlight/parse');
 
 export interface CommandSelectedCallback { (data: string) : void }
 
 interface SmartCompleteProps {
-    commands: string[]
+    commands: CommandLine[]
     commandSelectedCallBack: CommandSelectedCallback
 }
 
@@ -51,7 +51,6 @@ export class SmartComplete extends React.Component<SmartCompleteProps, any> {
                     renderSuggestion={this.renderSuggestion.bind(this)}
                     onSuggestionSelected={this.onSuggestionsSelected.bind(this)}
                     onSuggestionsClearRequested={this.onSuggestionsClearRequested.bind(this)}
-                    //alwaysRenderSuggestions={true}
                     inputProps={inputProps}
                     />
                     </div>
@@ -107,8 +106,7 @@ export class SmartComplete extends React.Component<SmartCompleteProps, any> {
         const keywords = escapedValue.split(' ');
         var result = Search.suggest({
             data: this.props.commands,
-            string: escapedValue,
-            keywords: keywords,
+            keywords: keywords
         });
         this.setState({
             searchedKeywords: keywords

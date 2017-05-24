@@ -6,7 +6,7 @@ import { SmartComplete } from "./components/smartcomplete/smartcomplete.componen
 import { Log } from "./components/log/log.component";
 import { Utr } from "./Utr";
 
-const commads :string[] = require('./data.json').map(e => e.cmd);
+const commads :CommandLine[] = require('./data.json');
 
 export class App extends React.Component<any, {}> {
     public style: any = require('./app.component.scss').toString();
