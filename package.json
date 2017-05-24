@@ -55,6 +55,7 @@
   "dependencies": {
     "@types/react-autosuggest": "^8.0.1",
     "autosuggest-highlight": "^3.1.0",
+    "chai": "^3.5.0",
     "child_process": "^1.0.2",
     "react": "15.5.4",
     "react-autosuggest": "^9.0.1",
