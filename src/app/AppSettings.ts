@@ -1,3 +1,3 @@
 export class AppSettings {
-    static repositoryRoot: string = '/Users/yan/unity/lane1'
+    static repositoryRoot: string = '/Users/oleksiy/unity/unity';
 }

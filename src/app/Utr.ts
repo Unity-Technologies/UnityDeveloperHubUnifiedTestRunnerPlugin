@@ -20,28 +20,28 @@ export class Utr {
     public run(cmd: string) {
         console.log (`utr run: {cmd}`);
        
-        var args : string[]; 
+        var args : string[] = new Array<string>();
         args.push ('utr.pl');
-        cmd.split(' ').forEach(element => {
-            args.push (element);    
+        args = args.concat (cmd.split(' '));
+
+        var utrProc = child_process.spawn ('perl', args,
+		    {cwd: this.repositoryRoot}
+	    );
+
+        var obj = this;
+        utrProc.stdout.on('data', (data) => {
+            obj.stdout(`${data}`);
         });
 
-        // var utrProc = proc.spawn ('perl', args,
-		//     {cwd: this.repositoryRoot}
-	    // );
-
-        // utrProc.stdout.on('data', (data) => {
-        //     this.stdout(`${data}`);
-        // });
-
-        // utrProc.stderr.on('data', (data) => {
-        //     this.stderr(`${data}`);
-        // });
+        utrProc.stderr.on('data', (data) => {
+            obj.stderr(`${data}`);
+        });
     }
 
     public static complete(input: string, onComplete: AutocompleteCallbak) : void {
         var result = new Array<string> ();
         console.log(input);
+        /*
         var autoCompleteProc = child_process.spawn ('perl', 
             ['Tools/UnifiedTestRunner/autocomplete.pl', input],
    	        {cwd: `${AppSettings.repositoryRoot}`}
@@ -55,5 +55,6 @@ export class Utr {
         autoCompleteProc.stderr.on('data', (data) => {
             console.error(data.toString());
         });
+         */
     }
 }

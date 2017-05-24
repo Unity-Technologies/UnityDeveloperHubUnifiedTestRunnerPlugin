@@ -5,24 +5,28 @@ import { CommandLine } from "./CommandLine";
 import { SmartComplete } from "./components/smartcomplete/smartcomplete.component";
 import { Log } from "./components/log/log.component";
 import { Utr } from "./Utr";
+import { AppSettings } from "./AppSettings";
 
-const commads :CommandLine[] = require('./data.json');
+const commands :CommandLine[] = require('./data.json');
+
+function onUtrStdOut(stdout: string) {
+    console.log(stdout);
+}
+
+function onUtrStdErr(stderr: string) {
+    console.error(stderr);
+}
 
 export class App extends React.Component<any, {}> {
     public style: any = require('./app.component.scss').toString();
+    private _log: Log;
 
-    private onUtrStdOut(stdout: string) {
-        console.log(stdout);
-    }
-
-    private onUtrStdErr(stderr: string) {
-        console.error(stderr);
-    }
- 
     private onCommandSelected(cmd: string) : void {
         console.log('Selected ' + cmd);
-        //const utr = new Utr ("~/unity/lane1", this.onUtrStdOut, this.onUtrStdErr);
-        Utr.complete(cmd, App.autoCompletionDone);
+        const utr = new Utr (AppSettings.repositoryRoot, (data) => {
+            this._log.append (data);
+        }, onUtrStdErr);
+        utr.run(cmd);
     }
 
     private static autoCompletionDone (data: Array<string>){
@@ -35,8 +39,8 @@ export class App extends React.Component<any, {}> {
             <ShadowDOM>
                 <div>
                     <style>{this.style}</style>
-                    <SmartComplete commands={commads} commandSelectedCallBack={this.onCommandSelected} />
-                    <Log />
+                    <SmartComplete commands={commands} commandSelectedCallBack={this} />
+                    <Log ref={(c) => this._log = c}/>
                 </div>
             </ShadowDOM>
         );

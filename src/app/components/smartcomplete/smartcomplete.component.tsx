@@ -9,12 +9,10 @@ import { Utr } from "./../../Utr"
 var match = require('autosuggest-highlight/match');
 var parse = require('autosuggest-highlight/parse');
 
-export interface CommandSelectedCallback { (data: string) : void }
-
 interface SmartCompleteProps {
-    commands: CommandLine[]
-    commandSelectedCallBack: CommandSelectedCallback
-    renderingParamsCompletions?: boolean
+    commands: CommandLine[],
+    commandSelectedCallBack: any,
+    renderingParamsCompletions?: boolean,
 }
 
 function escapeRegexCharacters(str: string): string {
@@ -83,13 +81,13 @@ export class SmartComplete extends React.Component<SmartCompleteProps, any> {
     protected onSuggestionsSelected(event: React.FormEvent<any>, data: Autosuggest.SuggestionSelectedEventData<CommandLine>): void {
         if (this.state.renderingParamsCompletions) {
             console.log('renderingParamsCompletions is true ' + this.state.value);
-            this.props.commandSelectedCallBack(this.state.value + ' ' + data.suggestion.cmd);
+            this.props.commandSelectedCallBack.onCommandSelected(this.state.value + ' ' + data.suggestion.cmd);
             this.setState ({
                 value: this.adjustCompletionValueForInput(this.state.value, data.suggestion.cmd),
                 renderingParamsCompletions: false
             });
         } else {
-            this.props.commandSelectedCallBack(data.suggestion.cmd);
+            this.props.commandSelectedCallBack.onCommandSelected(data.suggestion.cmd);
         }   
     }
 
