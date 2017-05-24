@@ -21,9 +21,8 @@ export class App extends React.Component<any, {}> {
  
     private onCommandSelected(cmd: string) : void {
         console.log('Selected ' + cmd);
-        const utr = new Utr ("~/unity/lane1", this.onUtrStdOut, this.onUtrStdErr);
-        utr.complete(cmd, App.autoCompletionDone);
-        //utr.run(cmd);
+        //const utr = new Utr ("~/unity/lane1", this.onUtrStdOut, this.onUtrStdErr);
+        Utr.complete(cmd, App.autoCompletionDone);
     }
 
     private static autoCompletionDone (data: Array<string>){
