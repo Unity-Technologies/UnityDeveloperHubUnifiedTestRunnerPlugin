@@ -8,21 +8,23 @@ describe('Suggestions tests', () => {
             keywords: [],
         };
 
-        const result = Search.suggest(req);
-        assert.deepEqual(result, []);
+        Search.suggest(req, (err, result) => {
+            assert.deepEqual(result, []);
+        });
     });
 
     it('Some data, but no matches', function () {
-		const req : SuggestionSearchRequest = {
+        const req : SuggestionSearchRequest = {
             data: [ {
                 "cmd" : "--suite=native"
             }],
             keywords: ['integration'],
         };
 
-        const result = Search.suggest(req);
-		assert.deepEqual(result, []);
- 	});
+        Search.suggest(req, (err, result) => {
+            assert.deepEqual(result, []);
+        });
+     });
     
     it ('One match', function() {
         const req : SuggestionSearchRequest = {
@@ -30,22 +32,23 @@ describe('Suggestions tests', () => {
             keywords: ['native'],
         };
 
-        const result = Search.suggest(req);
-		assert.deepEqual(result, [
-			{
-                "cmd": "--suite=native",
-			}
-		]);
+        Search.suggest(req, (err, result) => {
+            assert.deepEqual(result, [
+                {
+                    "cmd": "--suite=native",
+                }
+            ]);
+        });
     });
 
-	it ('Two matches', function() {
-		const result = Search.suggest ({
+    it ('Two matches', function() {
+        Search.suggest ({
             keywords: ['native', 'performance'],
             data: [{ "cmd": "--suite=native --category=performance"}],
-		});
-
-        assert.deepEqual(result, [{"cmd": "--suite=native --category=performance"}]);
-	});
+        }, (err, result) => {
+            assert.deepEqual(result, [{"cmd": "--suite=native --category=performance"}]);
+        });
+    });
 });
 // TODO: limit results
 // TODO: order of words does not matter

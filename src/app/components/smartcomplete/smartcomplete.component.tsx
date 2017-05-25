@@ -34,13 +34,15 @@ export class SmartComplete extends React.Component<SmartCompleteProps, SmartComp
     constructor(props: SmartCompleteProps) {
         super(props);
 
-        this.state = {
-            value: '',
-            suggestions: this.getSuggestions(''),
-            searchedKeywords: [],
-            renderingParamsCompletions: false,
-            selectedSuggestion: null
-        };
+        this.getSuggestions('', (err, result) => {
+            this.state = {
+                value: '',
+                suggestions: result,
+                searchedKeywords: [],
+                renderingParamsCompletions: false,
+                selectedSuggestion: null
+            };
+        });
     }
     private keyDown(event: React.FormEvent<any>) {
         const keyboardEvent = event.nativeEvent as KeyboardEvent;
@@ -141,13 +143,15 @@ export class SmartComplete extends React.Component<SmartCompleteProps, SmartComp
     }
 
     protected onSuggestionsFetchRequested({ value }: any): void {
-        this.setState({
-            suggestions: this.getSuggestions(value),
-            selectedSuggestion: null
+        this.getSuggestions(value, (err, data) => {
+            this.setState({
+                suggestions: data,
+                selectedSuggestion: null
+            });
         });
     }
 
-    protected getSuggestions(value: string): CommandLine[] {
+    protected getSuggestions(value: string, callback: any): CommandLine[] {
         const escapedValue = escapeRegexCharacters(value.trim());
 
         if (escapedValue === '') {
@@ -157,12 +161,10 @@ export class SmartComplete extends React.Component<SmartCompleteProps, SmartComp
         this.setState({
             searchedKeywords: keywords
         });
-        var result = Search.suggest({
+        Search.suggest({
             data: this.props.commands,
             keywords: keywords
-        });
-
-        return result;
+        }, callback);
     }
 
     protected adjustCompletionValueForInput(value: string, completion: string): string {
