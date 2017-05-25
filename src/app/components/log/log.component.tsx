@@ -13,11 +13,11 @@ function LogMessages(props) {
 
   return (
             <ul className={'suggestion-content'}>
-                <li >
+                <li>
                     {
                         lines.map((line, index) => {
-                            const regex = /((?:[a-zA-Z]\:){0,1}(?:[\\/][\w.]+){1,})/g;
-                            line = line.replace (regex, '<a href="file://$1">$1</a>');
+                            const regex = /(\s+|^)((?:[a-zA-Z]\:){0,1}(?:[\\/][\w.]+){1,})/g;
+                            line = line.replace (regex, '$1<a target="blank" href="file://$2">$2</a>');
                             line = line.replace (/\n/g, '<br/>');
                             return (
                                 <div dangerouslySetInnerHTML={{__html: line}}></div>
