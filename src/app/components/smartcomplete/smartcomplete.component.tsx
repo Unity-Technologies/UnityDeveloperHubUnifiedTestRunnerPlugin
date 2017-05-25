@@ -34,15 +34,13 @@ export class SmartComplete extends React.Component<SmartCompleteProps, SmartComp
     constructor(props: SmartCompleteProps) {
         super(props);
 
-        this.getSuggestions('', (err, result) => {
-            this.state = {
-                value: '',
-                suggestions: result,
-                searchedKeywords: [],
-                renderingParamsCompletions: false,
-                selectedSuggestion: null
-            };
-        });
+        this.state = {
+            value: '',
+            suggestions: [],
+            searchedKeywords: [],
+            renderingParamsCompletions: false,
+            selectedSuggestion: null
+        };
     }
     private keyDown(event: React.FormEvent<any>) {
         const keyboardEvent = event.nativeEvent as KeyboardEvent;
