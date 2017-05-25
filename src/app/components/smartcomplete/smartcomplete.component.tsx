@@ -10,16 +10,11 @@ var match = require('autosuggest-highlight/match');
 var parse = require('autosuggest-highlight/parse');
 
 
-interface CommandSelectedCallback { (data: string) : void }
+interface CommandSelectedCallback { (data: string): void }
 
 interface SmartCompleteProps {
     commands: CommandLine[],
     commandSelectedCallBack: CommandSelectedCallback,
-}
-
-enum RenderWhat {
-    ParamsCompletion,
-    Suggestion,
 }
 
 interface SmartCompleteState {
@@ -27,6 +22,7 @@ interface SmartCompleteState {
     suggestions: CommandLine[]
     searchedKeywords: string[]
     renderingParamsCompletions: boolean
+    selectedSuggestion: CommandLine
 }
 
 function escapeRegexCharacters(str: string): string {
@@ -37,25 +33,35 @@ export class SmartComplete extends React.Component<SmartCompleteProps, SmartComp
     public style: any = require('./smartcomplete.component.scss').toString();
     constructor(props: SmartCompleteProps) {
         super(props);
-       
+
         this.state = {
             value: '',
             suggestions: this.getSuggestions(''),
             searchedKeywords: [],
-            renderingParamsCompletions: false
+            renderingParamsCompletions: false,
+            selectedSuggestion: null
         };
     }
     private keyDown(event: React.FormEvent<any>) {
         const keyboardEvent = event.nativeEvent as KeyboardEvent;
-        if (keyboardEvent != null && keyboardEvent.ctrlKey && keyboardEvent.keyCode == 32) {
-            Utr.complete(this.state.value, this.completionsAvalaibe.bind(this)); 
+        if (keyboardEvent == null) {
+            return;
+        }
+        
+        if (keyboardEvent.keyCode == 13) {
+            this.props.commandSelectedCallBack(this.state.value);
+            return;
+        }
+
+        if (keyboardEvent.ctrlKey && keyboardEvent.keyCode == 32) {
+            Utr.complete(this.state.value, this.completionsAvalaibe.bind(this));
         }
     }
 
     private completionsAvalaibe(completions: Array<string>): void {
-        const suggestions : CommandLine[] = new Array<CommandLine>();
+        const suggestions: CommandLine[] = new Array<CommandLine>();
         completions.forEach(c => {
-            suggestions.push({cmd: this.adjustCompletionValueForInput(this.state.value, c)} )
+            suggestions.push({ cmd: this.adjustCompletionValueForInput(this.state.value, c) })
         });
         this.setState({
             suggestions: suggestions,
@@ -64,7 +70,7 @@ export class SmartComplete extends React.Component<SmartCompleteProps, SmartComp
     }
 
     render(): JSX.Element {
-        const {value, suggestions} = this.state;
+        const { value, suggestions } = this.state;
         const inputProps = {
             placeholder: `Type what you remember: 'native', 'integration', 'physics'. Select the command and hit enter`,
             value,
@@ -76,9 +82,9 @@ export class SmartComplete extends React.Component<SmartCompleteProps, SmartComp
         };
 
         return <ShadowDOM>
-                <div> 
-                    <style>{this.style}</style>
-                    <Autosuggest
+            <div>
+                <style>{this.style}</style>
+                <Autosuggest
                     suggestions={suggestions}
                     onSuggestionsFetchRequested={this.onSuggestionsFetchRequested.bind(this)}
                     getSuggestionValue={this.getSuggestionValue}
@@ -86,30 +92,22 @@ export class SmartComplete extends React.Component<SmartCompleteProps, SmartComp
                     onSuggestionSelected={this.onSuggestionsSelected.bind(this)}
                     onSuggestionsClearRequested={this.onSuggestionsClearRequested.bind(this)}
                     inputProps={inputProps}
-                    />
-                    </div>
-            </ShadowDOM>
+                />
+            </div>
+        </ShadowDOM>
     }
 
     protected onSuggestionsSelected(event: React.FormEvent<any>, data: Autosuggest.SuggestionSelectedEventData<CommandLine>): void {
-        if (this.state.renderingParamsCompletions) {
-            this.props.commandSelectedCallBack(this.state.value + ' ' + data.suggestion.cmd);
-            this.setState ({
-                value: data.suggestion.cmd,
-                renderingParamsCompletions: false
-            });
-        } else {
-            this.props.commandSelectedCallBack(data.suggestion.cmd);
-        }   
+        this.setState ({
+            selectedSuggestion: data.suggestion
+        });
     }
 
-    protected adjustCompletionValueForInput(value: string, completion: string) : string {
-        var parts = value.split(' ');
-        if (!value.endsWith('=')) {
-            parts.pop();
-            return parts.join(' ') + ' ' + completion;
-        }      
-        return parts.join(' ') + completion;
+    protected getSelectedCommandText() : string {
+         if (this.state.renderingParamsCompletions) {
+              return `${this.state.value}  ${this.state.selectedSuggestion.cmd}`;
+         }
+         return this.state.selectedSuggestion.cmd;
     }
 
     protected onSuggestionsClearRequested() {
@@ -123,8 +121,8 @@ export class SmartComplete extends React.Component<SmartCompleteProps, SmartComp
         var matches = match(suggestion.cmd, keywords.join(' '));
         var parts = parse(suggestion.cmd, matches);
         return (
-                <span className={'suggestion-content'}>
-                    <span className="name">
+            <span className={'suggestion-content'}>
+                <span className="name">
                     {
                         parts.map((part, index) => {
                             const className = part.highlight ? 'highlight' : null;
@@ -133,21 +131,22 @@ export class SmartComplete extends React.Component<SmartCompleteProps, SmartComp
                             );
                         })
                     }
-                    </span>
                 </span>
+            </span>
         );
     }
 
-    protected onChange(event: React.FormEvent<any>, {newValue, method}: any): void {
-        this.setState({value: newValue});
+    protected onChange(event: React.FormEvent<any>, { newValue, method }: any): void {
+        this.setState({ value: newValue });
     }
 
-    protected onSuggestionsFetchRequested({value}: any): void {
+    protected onSuggestionsFetchRequested({ value }: any): void {
         this.setState({
-            suggestions: this.getSuggestions(value)
+            suggestions: this.getSuggestions(value),
+            selectedSuggestion: null
         });
     }
- 
+
     protected getSuggestions(value: string): CommandLine[] {
         const escapedValue = escapeRegexCharacters(value.trim());
 
@@ -164,6 +163,16 @@ export class SmartComplete extends React.Component<SmartCompleteProps, SmartComp
         });
         return result;
     }
+
+    protected adjustCompletionValueForInput(value: string, completion: string): string {
+        var parts = value.split(' ');
+        if (!value.endsWith('=')) {
+            parts.pop();
+            return parts.join(' ') + ' ' + completion;
+        }
+        return parts.join(' ') + completion;
+    }
+
 
     protected getSuggestionValue(suggestion: CommandLine): string { return suggestion.cmd; }
 }
