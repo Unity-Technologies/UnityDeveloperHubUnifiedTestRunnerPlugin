@@ -9,7 +9,6 @@ import { Utr } from "./../../Utr"
 var match = require('autosuggest-highlight/match');
 var parse = require('autosuggest-highlight/parse');
 
-
 interface CommandSelectedCallback { (data: string): void }
 
 interface SmartCompleteProps {
@@ -23,10 +22,6 @@ interface SmartCompleteState {
     searchedKeywords: string[]
     renderingParamsCompletions: boolean
     selectedSuggestion: CommandLine
-}
-
-function escapeRegexCharacters(str: string): string {
-    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 export class SmartComplete extends React.Component<SmartCompleteProps, SmartCompleteState> {
@@ -150,12 +145,12 @@ export class SmartComplete extends React.Component<SmartCompleteProps, SmartComp
     }
 
     protected getSuggestions(value: string, callback: any): CommandLine[] {
-        const escapedValue = escapeRegexCharacters(value.trim());
+        value = value.trim();
 
-        if (escapedValue === '') {
+        if (value === '') {
             return [];
         }
-        const keywords = escapedValue.split(' ');
+        const keywords = value.split(' ');
         this.setState({
             searchedKeywords: keywords
         });
