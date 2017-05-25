@@ -20,6 +20,8 @@ export class Log extends React.Component<LogProps, LogState> {
     }
 
     public append(line:string):void {
+        const regex = /((?:[a-zA-Z]\:){0,1}(?:[\\/][\w.]+){1,})/g;
+        line = line.replace (regex, '<a href="file://$1">$1</a>');
         this.setState ({
             content: this.state.content + line
         });
