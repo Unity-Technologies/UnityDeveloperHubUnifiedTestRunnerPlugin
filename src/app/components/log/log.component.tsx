@@ -5,8 +5,29 @@ export interface LogProps {
 };
 
 export interface LogState {
-    content: string;
+    lines: string[];
 };
+
+function LogMessages(props) {
+  const lines = props.lines;
+
+  return (
+            <ul className={'suggestion-content'}>
+                <li >
+                    {
+                        lines.map((line, index) => {
+                            const regex = /((?:[a-zA-Z]\:){0,1}(?:[\\/][\w.]+){1,})/g;
+                            line = line.replace (regex, '<a href="file://$1">$1</a>');
+                            line = line.replace (/\n/g, '<br/>');
+                            return (
+                                <div dangerouslySetInnerHTML={{__html: line}}></div>
+                            );
+                        })
+                    }
+                </li>
+            </ul>
+    );
+}
 
 export class Log extends React.Component<LogProps, LogState> {
     public style: any = require('./log.component.scss').toString();
@@ -15,15 +36,16 @@ export class Log extends React.Component<LogProps, LogState> {
         super(props);
 
         this.state = {
-            content: "",
+            lines: [],
         };
     }
 
     public append(line:string):void {
-        const regex = /((?:[a-zA-Z]\:){0,1}(?:[\\/][\w.]+){1,})/g;
-        line = line.replace (regex, '<a href="file://$1">$1</a>');
+        // TODO: find more effective way to do this
+        const lines = this.state.lines;
+        lines.push(line);
         this.setState ({
-            content: this.state.content + line
+            lines: lines
         });
     }
 
@@ -32,7 +54,7 @@ export class Log extends React.Component<LogProps, LogState> {
             <ShadowDOM>
                 <div>
                     <style>{this.style}</style>
-                    {this.state.content}
+                    <LogMessages lines={this.state.lines}/>
                 </div>
             </ShadowDOM>
         );
