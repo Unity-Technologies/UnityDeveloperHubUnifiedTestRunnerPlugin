@@ -41,7 +41,6 @@ export class Utr {
     public static complete(input: string, onComplete: AutocompleteCallbak) : void {
         var result = new Array<string> ();
         console.log(input);
-        /*
         var autoCompleteProc = child_process.spawn ('perl', 
             ['Tools/UnifiedTestRunner/autocomplete.pl', input],
    	        {cwd: `${AppSettings.repositoryRoot}`}
@@ -55,6 +54,5 @@ export class Utr {
         autoCompleteProc.stderr.on('data', (data) => {
             console.error(data.toString());
         });
-         */
     }
 }
