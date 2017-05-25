@@ -9,10 +9,12 @@ import { Utr } from "./../../Utr"
 var match = require('autosuggest-highlight/match');
 var parse = require('autosuggest-highlight/parse');
 
+
+interface CommandSelectedCallback { (data: string) : void }
+
 interface SmartCompleteProps {
     commands: CommandLine[],
-    commandSelectedCallBack: any,
-    renderingParamsCompletions?: boolean,
+    commandSelectedCallBack: CommandSelectedCallback,
 }
 
 enum RenderWhat {
@@ -50,9 +52,9 @@ export class SmartComplete extends React.Component<SmartCompleteProps, SmartComp
         }
     }
 
-    private completionsAvalaibe(complettions: Array<string>): void {
+    private completionsAvalaibe(completions: Array<string>): void {
         const suggestions : CommandLine[] = new Array<CommandLine>();
-        complettions.forEach(c => {
+        completions.forEach(c => {
             suggestions.push({cmd: this.adjustCompletionValueForInput(this.state.value, c)} )
         });
         this.setState({
@@ -91,13 +93,13 @@ export class SmartComplete extends React.Component<SmartCompleteProps, SmartComp
 
     protected onSuggestionsSelected(event: React.FormEvent<any>, data: Autosuggest.SuggestionSelectedEventData<CommandLine>): void {
         if (this.state.renderingParamsCompletions) {
-            this.props.commandSelectedCallBack.onCommandSelected(this.state.value + ' ' + data.suggestion.cmd);
+            this.props.commandSelectedCallBack(this.state.value + ' ' + data.suggestion.cmd);
             this.setState ({
                 value: data.suggestion.cmd,
                 renderingParamsCompletions: false
             });
         } else {
-            this.props.commandSelectedCallBack.onCommandSelected(data.suggestion.cmd);
+            this.props.commandSelectedCallBack(data.suggestion.cmd);
         }   
     }
 

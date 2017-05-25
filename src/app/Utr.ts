@@ -18,7 +18,7 @@ export class Utr {
     }
 
     public run(cmd: string) {
-        console.log (`utr run: {cmd}`);
+        console.log (`utr run: ${cmd}`);
        
         var args : string[] = new Array<string>();
         args.push ('utr.pl');
