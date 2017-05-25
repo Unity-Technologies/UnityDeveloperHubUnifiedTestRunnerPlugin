@@ -154,13 +154,14 @@ export class SmartComplete extends React.Component<SmartCompleteProps, SmartComp
             return [];
         }
         const keywords = escapedValue.split(' ');
+        this.setState({
+            searchedKeywords: keywords
+        });
         var result = Search.suggest({
             data: this.props.commands,
             keywords: keywords
         });
-        this.setState({
-            searchedKeywords: keywords
-        });
+
         return result;
     }
 
