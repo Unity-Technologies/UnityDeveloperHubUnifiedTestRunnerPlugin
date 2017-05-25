@@ -15,11 +15,23 @@ interface SmartCompleteProps {
     renderingParamsCompletions?: boolean,
 }
 
+enum RenderWhat {
+    ParamsCompletion,
+    Suggestion,
+}
+
+interface SmartCompleteState {
+    value: string
+    suggestions: CommandLine[]
+    searchedKeywords: string[]
+    renderingParamsCompletions: boolean
+}
+
 function escapeRegexCharacters(str: string): string {
     return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-export class SmartComplete extends React.Component<SmartCompleteProps, any> {
+export class SmartComplete extends React.Component<SmartCompleteProps, SmartCompleteState> {
     public style: any = require('./smartcomplete.component.scss').toString();
     constructor(props: SmartCompleteProps) {
         super(props);
@@ -79,7 +91,6 @@ export class SmartComplete extends React.Component<SmartCompleteProps, any> {
 
     protected onSuggestionsSelected(event: React.FormEvent<any>, data: Autosuggest.SuggestionSelectedEventData<CommandLine>): void {
         if (this.state.renderingParamsCompletions) {
-            console.log('renderingParamsCompletions is true ' + this.state.value);
             this.props.commandSelectedCallBack.onCommandSelected(this.state.value + ' ' + data.suggestion.cmd);
             this.setState ({
                 value: data.suggestion.cmd,
