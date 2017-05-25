@@ -3,7 +3,8 @@ body {
 }
 
 .react-autosuggest__container {
-  position: relative;
+  position: fixed;
+  width: 90%;
   border-radius: 4px;
 }
 
