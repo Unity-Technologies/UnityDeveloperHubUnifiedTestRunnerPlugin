@@ -1,13 +1,12 @@
 import * as React from "react";
 import ShadowDOM from 'react-shadow';
-import AutoSuggest = require("react-autosuggest");
 import { CommandLine } from "./CommandLine";
 import { SmartComplete } from "./components/smartcomplete/smartcomplete.component";
 import { Log } from "./components/log/log.component";
 import { Utr } from "./Utr";
 import { AppSettings } from "./AppSettings";
 
-const commands :CommandLine[] = require('./data.small.json');
+const commands :CommandLine[] = require('./data.json');
 
 export class App extends React.Component<any, {}> {
     public style: any = require('./app.component.scss').toString();
@@ -27,10 +26,6 @@ export class App extends React.Component<any, {}> {
 
     private onUtrStdErr(data: string) {
         this._log.append (data);
-    }
-
-    private static autoCompletionDone (data: Array<string>){
-        console.log (data);
     }
 
     render() {
