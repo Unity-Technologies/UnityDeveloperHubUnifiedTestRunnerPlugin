@@ -89,6 +89,3 @@ describe('Suggestions tests', () => {
 // TODO: limit results
 // TODO: sort test results by relevance
 // TODO: order of words does not matter
-
-
-
