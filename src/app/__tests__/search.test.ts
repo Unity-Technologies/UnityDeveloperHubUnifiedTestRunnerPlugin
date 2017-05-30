@@ -1,34 +1,48 @@
+
+import * as request from 'request'
 import { Search, SuggestionSearchRequest } from '../Search'
-import {assert} from 'chai'
+import { assert } from 'chai'
+import * as sinon from 'sinon'
 
 describe('Suggestions tests', () => {
-    it('no data. no matches', () => {
-        const req : SuggestionSearchRequest = {
+    beforeEach(() => {
+         sinon
+            .stub(request, 'get')
+            .yields(null, null, JSON.stringify([]));
+    });
+
+    afterEach(() => {
+         request.get.restore();
+    });
+
+    it('no data. no matches', (done) => {
+        const req: SuggestionSearchRequest = {
             data: [],
             keywords: [],
         };
 
         Search.suggest(req, (err, result) => {
             assert.deepEqual(result, []);
+            done();
         });
     });
 
-    it('Some data, but no matches', function () {
-        const req : SuggestionSearchRequest = {
-            data: [ {
-                "cmd" : "--suite=native"
+    it('Some data, but no matches', (done) => {
+        const req: SuggestionSearchRequest = {
+            data: [{
+                "cmd": "--suite=native"
             }],
             keywords: ['integration'],
         };
-
         Search.suggest(req, (err, result) => {
             assert.deepEqual(result, []);
+            done();
         });
-     });
-    
-    it ('One match', function() {
-        const req : SuggestionSearchRequest = {
-            data: [{"cmd" : "--suite=native"}],
+    });
+
+    it('One match', (done) => {
+        const req: SuggestionSearchRequest = {
+            data: [{ "cmd": "--suite=native" }],
             keywords: ['native'],
         };
 
@@ -38,19 +52,42 @@ describe('Suggestions tests', () => {
                     "cmd": "--suite=native",
                 }
             ]);
+            done();
         });
     });
 
-    it ('Two matches', function() {
-        Search.suggest ({
+    it('Two matches on same suggestion', (done) => {
+        const req: SuggestionSearchRequest = {
             keywords: ['native', 'performance'],
-            data: [{ "cmd": "--suite=native --category=performance"}],
-        }, (err, result) => {
-            assert.deepEqual(result, [{"cmd": "--suite=native --category=performance"}]);
+            data: [{ "cmd": "--suite=native --category=performance" }]
+        }
+        Search.suggest(req, (err, result) => {
+            assert.deepEqual(result, [{ "cmd": "--suite=native --category=performance" }]);
+            done();
+        });
+    });
+
+    it('Queries hoarder if no matched found', (done) => {
+        const req: SuggestionSearchRequest = {
+            keywords: ['WWWWorks'],
+            data: []
+        }
+
+        const response = [{ Name: "WWWWorks", Suite: "runtime" }];
+        request.get.restore();
+        sinon
+            .stub(request, 'get')
+            .yields(
+            null, null, JSON.stringify(response));
+
+        Search.suggest(req, (err, result) => {
+            assert.deepEqual(result, [{ cmd: "--suite=runtime --testfilter=WWWWorks" }]);
+            done();
         });
     });
 });
 // TODO: limit results
+// TODO: sort test results by relevance
 // TODO: order of words does not matter
 
 

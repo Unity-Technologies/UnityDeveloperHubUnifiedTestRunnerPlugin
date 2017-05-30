@@ -1,6 +1,6 @@
 import { CommandLine } from "./CommandLine"
-import * as http  from 'http';
-import * as request  from 'request';
+
+const request = require ('request')
 
 export interface SuggestionSearchRequest {
     data: CommandLine[]
@@ -16,41 +16,30 @@ export class Search {
             callback (null, matches);
             return;
         }
-        
-        if (matches.length != 0){
-            return;
-        }
-        if (params.keywords.length == 1) {
-            const testName = params.keywords[0];
-            const url = `http://api.hoarder.qa-staging.hq.unity3d.com/v1/TestInfo?name=${testName}`;
-       
-            var propertiesObject = { name: testName };
 
-            request({url:url, qs:propertiesObject}, function(err, response, body) {
-                if(err) { 
-                    console.error(err); 
-                    return; 
+        Search.httpGet(params, function(err, data) {
+            const result = new Array<CommandLine>();
+            data.forEach(e => {
+                const cmd : CommandLine = {
+                    cmd: `--suite=${e.Suite} --testfilter=${e.Name}`
                 }
-                if (response.statusCode != 200) {
-                    console.error(`Failed to query a test info. Response status ${response.statusCode}`); 
-                    return; 
-                }
-                
-                const result = new Array<CommandLine>();
-                const responseArray = JSON.parse (body);
-                responseArray.forEach(e => {
-                    const cmd : CommandLine = {
-                        cmd: `--suite=${e.Suite} --testfilter=${e.Name}`
-                    }
-                    result.push(cmd);
-                });
-                callback (err, result);
-                return;
+                result.push(cmd);
             });
-            return;
-        }
-        callback(null, []);
+            callback(err, result);
+        });
     }
 
-
+    static httpGet(params: SuggestionSearchRequest, callback: any) : void {
+        const testName = params.keywords[0];
+        const url = `http://api.hoarder.qa-staging.hq.unity3d.com/v1/TestInfo`;
+        var propertiesObject = { name: testName };
+        const result = new Array<CommandLine>();
+        request.get ({url:url, qs:propertiesObject}, function(err, response, body) {
+            let data = JSON.parse(body);
+            if (data == undefined) {
+                data = [];
+            }
+            callback (null, data);
+        });
+    }
 }
