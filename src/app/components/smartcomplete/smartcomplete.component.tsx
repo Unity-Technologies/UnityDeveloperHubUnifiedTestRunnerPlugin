@@ -49,7 +49,6 @@ export class SmartComplete extends React.Component<SmartCompleteProps, SmartComp
         }
 
         if (keyboardEvent.ctrlKey && keyboardEvent.keyCode == 32) {
-            console.log('completing');
             Utr.complete(this.state.value, this.completionsAvalaibe.bind(this));
         }
     }
