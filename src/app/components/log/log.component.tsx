@@ -1,6 +1,6 @@
 import * as React from "react";
 import ShadowDOM from 'react-shadow';
-
+import { LogUtils } from './log.utils'
 export interface LogProps {
 };
 
@@ -9,30 +9,36 @@ export interface LogState {
 };
 
 function LogMessages(props) {
-  const lines = props.lines;
-
-  return (
-            <ul className={'suggestion-content'}>
-                <li>
-                    {
-                        lines.map((line, index) => {
-                            const regex = /(\s+|^)((?:[a-zA-Z]\:){0,1}(?:[\\/][\w.]+){1,})/g;
-                            line = line.replace (regex, '$1<a target="blank" href="file://$2">$2</a>');
-                            line = line.replace (/\n/g, '<br/>');
-                            return (
-                                <div dangerouslySetInnerHTML={{__html: line}}></div>
-                            );
-                        })
-                    }
-                </li>
-            </ul>
+    const lines = props.lines;
+    return (
+        <ul>
+            {
+                lines.map((line, index) => {
+                        return (
+                            <li>
+                            {
+                                LogUtils.split(line).map(p => {
+                                    let element = <span>{p.value}</span>
+                                    if (p.isFileName) {
+                                        element = <span><a target="blank" href={p.value}>{p.value}</a></span>
+                                    }
+                                    return (
+                                        element
+                                    );
+                                })
+                            }
+                            </li>
+                        )
+                })
+            }
+        </ul>
     );
 }
 
 export class Log extends React.Component<LogProps, LogState> {
     public style: any = require('./log.component.scss').toString();
 
-    constructor (props : LogProps) {
+    constructor(props: LogProps) {
         super(props);
 
         this.state = {
@@ -40,11 +46,11 @@ export class Log extends React.Component<LogProps, LogState> {
         };
     }
 
-    public append(line:string):void {
+    public append(line: string): void {
         // TODO: find more effective way to do this
         const lines = this.state.lines;
         lines.push(line);
-        this.setState ({
+        this.setState({
             lines: lines
         });
     }
@@ -54,7 +60,7 @@ export class Log extends React.Component<LogProps, LogState> {
             <ShadowDOM>
                 <div>
                     <style>{this.style}</style>
-                    <LogMessages lines={this.state.lines}/>
+                    <LogMessages lines={this.state.lines} />
                 </div>
             </ShadowDOM>
         );
