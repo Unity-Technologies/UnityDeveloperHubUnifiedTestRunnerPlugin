@@ -1,6 +1,12 @@
+export enum PartType {
+    FilePath,
+    LineBreak,
+    String
+}
+
 export interface LinePart {
-    value: string;
-    isFileName: boolean;
+    value: string
+    type: PartType
 }
 
 export class LogUtils {
@@ -17,9 +23,9 @@ export class LogUtils {
                 return;
             }
             if (p.match(regex)) {
-                result.push({ value: p, isFileName: true })
+                result.push({ value: p, type: PartType.FilePath })
             } else {
-                result.push({ value: p, isFileName: false })
+                result.push({ value: p, type: PartType.String })
             }
         });
         return result;
