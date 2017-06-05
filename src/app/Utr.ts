@@ -5,6 +5,8 @@ import {AppSettings} from "./AppSettings";
 var http = require('http');
 interface OutPutCallBack { (data: string) : void }
 interface AutocompleteCallbak { (data: Array<string>) : void }
+export interface HistoryCallback { (data: Array<string>) : void }
+
 
 export class Utr {
     private repositoryRoot: string;
@@ -40,7 +42,6 @@ export class Utr {
 
     public static complete(input: string, onComplete: AutocompleteCallbak) : void {
         var result = new Array<string> ();
-        console.log(input);
         var autoCompleteProc = child_process.spawn ('perl', 
             ['Tools/UnifiedTestRunner/autocomplete.pl', input],
    	        {cwd: `${AppSettings.repositoryRoot}`}
@@ -55,4 +56,11 @@ export class Utr {
             console.error(data.toString());
         });
     }
+
+    public static history(onComplete: HistoryCallback ) : void  {
+         var historyProc = child_process.spawn ('perl', 
+            ['Tools/UnifiedTestRunner/history.pl'],
+   	        {cwd: `${AppSettings.repositoryRoot}`}
+	     );
+   }
 }
