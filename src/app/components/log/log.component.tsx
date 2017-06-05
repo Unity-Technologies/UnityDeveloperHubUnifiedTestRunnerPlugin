@@ -8,14 +8,12 @@ export interface LogState {
     lines: string[];
 };
 
-
 function LogMessages(props) {
     const lines = props.lines;
     return (
         <div>
             {
                 lines.map((line, index) => {
-                     
                     return (
                             <div>
                             {
