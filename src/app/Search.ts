@@ -35,7 +35,12 @@ export class Search {
         var propertiesObject = { name: testName };
         const result = new Array<CommandLine>();
         request.get ({url:url, qs:propertiesObject}, function(err, response, body) {
-            let data = JSON.parse(body);
+            if (err) {
+                console.error(err);
+                return;
+            }
+            console.log(err);
+            var data = JSON.parse(body);
             if (data == undefined) {
                 data = [];
             }

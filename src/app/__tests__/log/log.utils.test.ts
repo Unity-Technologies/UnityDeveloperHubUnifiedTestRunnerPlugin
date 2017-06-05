@@ -48,4 +48,20 @@ describe('log.utils tests', () => {
             {value: ' suffix text', type: PartType.String},
         ]);
     });
+
+    it('line contains line break only. Returns 1 part', () => {
+        const parts = LogUtils.split("\n");
+        assert.deepEqual(parts, [ 
+            {value: '\n', type: PartType.LineBreak},
+        ]);
+    });
+ 
+    it('line contains line break and some other text. Returns 2 part', () => {
+        const parts = LogUtils.split("prefix\nsuffix");
+        assert.deepEqual(parts, [ 
+            {value: 'prefix', type: PartType.String},
+            {value: '\n', type: PartType.LineBreak},
+            {value: 'suffix', type: PartType.String},
+        ]);
+    });
 });

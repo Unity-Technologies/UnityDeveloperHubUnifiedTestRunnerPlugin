@@ -1,6 +1,6 @@
 import * as React from "react";
 import ShadowDOM from 'react-shadow';
-import { LogUtils } from './log.utils'
+import { LogUtils, PartType } from './log.utils'
 export interface LogProps {
 };
 
@@ -8,30 +8,33 @@ export interface LogState {
     lines: string[];
 };
 
+
 function LogMessages(props) {
     const lines = props.lines;
     return (
-        <ul>
+        <div>
             {
                 lines.map((line, index) => {
-                        return (
-                            <li>
+                     
+                    return (
+                            <div>
                             {
                                 LogUtils.split(line).map(p => {
-                                    let element = <span>{p.value}</span>
-                                    if (p.isFileName) {
-                                        element = <span><a target="blank" href={p.value}>{p.value}</a></span>
+                                    switch(p.type){
+                                        case PartType.FilePath:
+                                            return <span><a target="blank" href={p.value}>{p.value}</a></span>
+                                        case PartType.LineBreak:
+                                            return <br />
+                                        default:
+                                            return <span>{p.value}</span>
                                     }
-                                    return (
-                                        element
-                                    );
                                 })
                             }
-                            </li>
+                            </div>
                         )
                 })
             }
-        </ul>
+        </div>
     );
 }
 
