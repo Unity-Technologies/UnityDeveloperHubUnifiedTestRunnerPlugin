@@ -16,7 +16,6 @@ export class Search {
             callback (null, matches);
             return;
         }
-        callback(null, []);
         Search.httpGet(params, function(err, data) {
             const result = new Array<CommandLine>();
             data.forEach(e => {
