@@ -12,7 +12,6 @@ var parse = require('autosuggest-highlight/parse');
 interface CommandSelectedCallback { (data: string): void }
 
 interface SmartCompleteProps {
-    commands: CommandLine[],
     commandSelectedCallBack: CommandSelectedCallback,
 }
 
@@ -42,7 +41,7 @@ export class SmartComplete extends React.Component<SmartCompleteProps, SmartComp
         if (keyboardEvent == null) {
             return;
         }
-        
+
         if (keyboardEvent.keyCode == 13) {
             this.props.commandSelectedCallBack(this.state.value);
             return;
@@ -93,16 +92,16 @@ export class SmartComplete extends React.Component<SmartCompleteProps, SmartComp
     }
 
     protected onSuggestionsSelected(event: React.FormEvent<any>, data: Autosuggest.SuggestionSelectedEventData<CommandLine>): void {
-        this.setState ({
+        this.setState({
             selectedSuggestion: data.suggestion
         });
     }
 
-    protected getSelectedCommandText() : string {
-         if (this.state.renderingParamsCompletions) {
-              return `${this.state.value}  ${this.state.selectedSuggestion.cmd}`;
-         }
-         return this.state.selectedSuggestion.cmd;
+    protected getSelectedCommandText(): string {
+        if (this.state.renderingParamsCompletions) {
+            return `${this.state.value}  ${this.state.selectedSuggestion.cmd}`;
+        }
+        return this.state.selectedSuggestion.cmd;
     }
 
     protected onSuggestionsClearRequested() {
@@ -136,28 +135,44 @@ export class SmartComplete extends React.Component<SmartCompleteProps, SmartComp
     }
 
     protected onSuggestionsFetchRequested({ value }: any): void {
+        const self = this;
         this.getSuggestions(value, (err, data) => {
-            this.setState({
+           
+            self.setState({
                 suggestions: data,
                 selectedSuggestion: null
             });
         });
     }
 
-    protected getSuggestions(value: string, callback: any): CommandLine[] {
+    protected getSuggestions(value: string, callback: any) : void {
         value = value.trim();
 
         if (value === '') {
-            return [];
+            callback(null, []);
         }
         const keywords = value.split(' ');
         this.setState({
             searchedKeywords: keywords
         });
-        Search.suggest({
-            data: this.props.commands,
-            keywords: keywords
-        }, callback);
+        var data : CommandLine[] = require('./../../data.json'); 
+     
+        Utr.history((histEntries: Array<string>) => {
+            var data = histEntries.map((e) => {
+                var result: CommandLine = { cmd: e.replace(/.\/utr[.]pl/g, '').trim() };
+                return result;
+            });
+            
+            var predefinedCommandLines : CommandLine[] = require('./../../data.json');
+            predefinedCommandLines.forEach(cmd => {
+               data.push(cmd); 
+            });
+
+            Search.suggest({
+                data: data,
+                keywords: keywords
+            }, callback);
+        });
     }
 
     protected adjustCompletionValueForInput(value: string, completion: string): string {

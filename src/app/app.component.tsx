@@ -6,8 +6,6 @@ import { Log } from "./components/log/log.component";
 import { Utr } from "./Utr";
 import { AppSettings } from "./AppSettings";
 
-const commands :CommandLine[] = require('./data.json');
-
 export class App extends React.Component<any, {}> {
     public style: any = require('./app.component.scss').toString();
     private _log: Log;
