@@ -1,18 +1,34 @@
 import {assert} from 'chai'
-import { chaiSubset } from 'chai-subset'
 import { Utr, HistoryCallback } from '../Utr'
 import * as mock_spawn from 'mock_spawn';
 import {AppSettings} from '../AppSettings'
 
+const child_process = require('child_process')
+const mockSpawn = require('mock-spawn')
+var spawn = mockSpawn ();
+child_process.spawn = spawn;
+
 describe('UTR tests', () => {
-    it('invokes history.pl with correct arguments', () => {
-        var mockSpawn = require('mock-spawn');
-        var mySpawn = mockSpawn();
-        require('child_process').spawn = mySpawn;
-        Utr.history(() => {});
-        var call = mySpawn.calls[0];
-        assert.equal (call.command, 'perl');
-        assert.deepEqual (call.args, ['Tools/UnifiedTestRunner/history.pl']);
-        assert.deepEqual (call.opts, {cwd: AppSettings.repositoryRoot});
-   });
+    
+    describe("history", () => {
+        it('invokes with correct arguments', (done) => {
+            spawn.setDefault(spawn.simple());
+            Utr.history(() => {
+                var call = spawn.calls[0];
+                assert.equal(call.command, 'perl');
+                assert.deepEqual(call.args, ['Tools/UnifiedTestRunner/history.pl']);
+                assert.deepEqual(call.opts, { cwd: AppSettings.repositoryRoot });
+                done();
+            });
+        });
+
+       it('Invokes callback with the list of strings strings', (done) => {
+            spawn.setDefault(spawn.simple(0, '["command_line_text"]'));
+            Utr.history((histEntries: Array<string>) => {
+                assert.deepEqual(histEntries, ['command_line_text']);
+                done();
+            });
+        });
+    });
+
 });

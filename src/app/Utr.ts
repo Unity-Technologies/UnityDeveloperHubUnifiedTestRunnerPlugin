@@ -66,7 +66,10 @@ export class Utr {
             result += data.toString();
         });
         historyProc.on('close', () => {
-            console.log(result);
+            if (result.length == 0) {
+                onComplete([]);
+                return;
+            }
             onComplete(JSON.parse(result));
         });
     }
