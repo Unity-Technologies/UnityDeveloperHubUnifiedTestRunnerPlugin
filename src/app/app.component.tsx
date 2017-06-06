@@ -5,17 +5,18 @@ import { SmartComplete } from "./components/smartcomplete/smartcomplete.componen
 import { Log } from "./components/log/log.component";
 import { Utr } from "./Utr";
 import { AppSettings } from "./AppSettings";
+import * as child_process from 'child_process';
 
 export class App extends React.Component<any, {}> {
     public style: any = require('./app.component.scss').toString();
     private _log: Log;
 
     private onCommandSelected(cmd: string) : void {
-        const utr = new Utr(AppSettings.repositoryRoot,
+        const utr = new Utr(AppSettings.repositoryRoot, child_process.spawn);
+        utr.run(cmd, 
             this.onUtrStdOut.bind(this),
             this.onUtrStdErr.bind(this)
         );
-        utr.run(cmd);
     }
 
     private onUtrStdOut(data: string) {
@@ -31,7 +32,7 @@ export class App extends React.Component<any, {}> {
             <ShadowDOM>
                 <div>
                     <style>{this.style}</style>
-                    <SmartComplete commands={commands} 
+                    <SmartComplete 
                         commandSelectedCallBack={this.onCommandSelected.bind(this)} 
                     />
                     <Log ref={(c) => this._log = c}/>

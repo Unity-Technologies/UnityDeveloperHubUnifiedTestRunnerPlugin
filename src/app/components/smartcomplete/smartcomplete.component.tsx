@@ -3,8 +3,11 @@ import ReactDOM = require('react-dom');
 import Autosuggest = require('react-autosuggest');
 import ShadowDOM from 'react-shadow';
 import { CommandLine } from "./../../CommandLine";
+import { AppSettings } from "./../../AppSettings";
+
 import { Search } from "./../../Search"
 import { Utr } from "./../../Utr"
+import * as child_process from 'child_process';
 
 var match = require('autosuggest-highlight/match');
 var parse = require('autosuggest-highlight/parse');
@@ -48,7 +51,8 @@ export class SmartComplete extends React.Component<SmartCompleteProps, SmartComp
         }
 
         if (keyboardEvent.ctrlKey && keyboardEvent.keyCode == 32) {
-            Utr.complete(this.state.value, this.completionsAvalaibe.bind(this));
+            const utr = new Utr(AppSettings.repositoryRoot, child_process.spawn);
+            utr.complete(this.state.value, this.completionsAvalaibe.bind(this));
         }
     }
 
@@ -157,7 +161,8 @@ export class SmartComplete extends React.Component<SmartCompleteProps, SmartComp
         });
         var data : CommandLine[] = require('./../../data.json'); 
      
-        Utr.history((histEntries: Array<string>) => {
+        const utr = new Utr(AppSettings.repositoryRoot, child_process.spawn);
+        utr.history((histEntries: Array<string>) => {
             var data = histEntries.map((e) => {
                 var result: CommandLine = { cmd: e.replace(/.\/utr[.]pl/g, '').trim() };
                 return result;
