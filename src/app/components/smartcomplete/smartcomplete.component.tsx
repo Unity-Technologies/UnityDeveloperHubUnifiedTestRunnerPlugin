@@ -86,6 +86,7 @@ export class SmartComplete extends React.Component<SmartCompleteProps, SmartComp
                     suggestions={suggestions}
                     onSuggestionsFetchRequested={this.onSuggestionsFetchRequested.bind(this)}
                     getSuggestionValue={this.getSuggestionValue}
+                    shouldRenderSuggestions={this.shouldRenderSuggestions.bind(this)}
                     renderSuggestion={this.renderSuggestion.bind(this)}
                     onSuggestionSelected={this.onSuggestionsSelected.bind(this)}
                     onSuggestionsClearRequested={this.onSuggestionsClearRequested.bind(this)}
@@ -95,6 +96,9 @@ export class SmartComplete extends React.Component<SmartCompleteProps, SmartComp
         </ShadowDOM>
     }
 
+    private shouldRenderSuggestions() {
+        return true;
+    }
     protected onSuggestionsSelected(event: React.FormEvent<any>, data: Autosuggest.SuggestionSelectedEventData<CommandLine>): void {
         this.setState({
             selectedSuggestion: data.suggestion
@@ -168,6 +172,11 @@ export class SmartComplete extends React.Component<SmartCompleteProps, SmartComp
                 return result;
             });
             
+            if (this.state.value == '') {
+                callback(null, data);
+                return;
+            }
+
             var predefinedCommandLines : CommandLine[] = require('./../../data.json');
             predefinedCommandLines.forEach(cmd => {
                data.push(cmd); 
@@ -179,6 +188,8 @@ export class SmartComplete extends React.Component<SmartCompleteProps, SmartComp
             }, callback);
         });
     }
+
+    
 
     protected adjustCompletionValueForInput(value: string, completion: string): string {
         var parts = value.split(' ');
