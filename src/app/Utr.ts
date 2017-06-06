@@ -10,37 +10,34 @@ export interface HistoryCallback { (data: Array<string>): void }
 
 export class Utr {
     private repositoryRoot: string;
-    private stdout: OutPutCallBack;
-    private stderr: OutPutCallBack;
+    private spawn: any;
 
-    constructor(repositoryRoot: string, stdout: OutPutCallBack, stderr: OutPutCallBack) {
+    constructor(repositoryRoot: string, spawn: any) {
         this.repositoryRoot = repositoryRoot;
-        this.stdout = stdout;
-        this.stderr = stderr;
+        this.spawn = spawn;
     }
 
-    public run(cmd: string) {
+    public run(cmd: string, stdout: OutPutCallBack, stderr: OutPutCallBack) {
         console.log(`utr run: ${cmd}`);
 
         var args: string[] = new Array<string>();
         args.push('utr.pl');
         args = args.concat(cmd.split(' '));
 
-        var utrProc = child_process.spawn('perl', args,
+        var utrProc = this.spawn('perl', args,
             { cwd: this.repositoryRoot }
         );
 
-        var obj = this;
         utrProc.stdout.on('data', (data) => {
-            obj.stdout(`${data}`);
+            stdout(`${data}`);
         });
 
         utrProc.stderr.on('data', (data) => {
-            obj.stderr(`${data}`);
+            stderr(`${data}`);
         });
     }
 
-    public static complete(input: string, onComplete: AutocompleteCallbak): void {
+    public complete(input: string, onComplete: AutocompleteCallbak): void {
         var result = new Array<string>();
         var autoCompleteProc = child_process.spawn('perl',
             ['Tools/UnifiedTestRunner/autocomplete.pl', input],
@@ -56,7 +53,7 @@ export class Utr {
         });
     }
 
-    public static history(onComplete: HistoryCallback): void {
+    public history(onComplete: HistoryCallback): void {
         var historyProc = child_process.spawn('perl',
             ['Tools/UnifiedTestRunner/history.pl'],
             { cwd: `${AppSettings.repositoryRoot}` }
