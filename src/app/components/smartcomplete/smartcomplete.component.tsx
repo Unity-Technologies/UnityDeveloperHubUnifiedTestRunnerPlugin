@@ -46,7 +46,9 @@ export class SmartComplete extends React.Component<SmartCompleteProps, SmartComp
         }
 
         if (keyboardEvent.keyCode == 13) {
+            const value = this.state.value;
             this.props.commandSelectedCallBack(this.state.value);
+
             return;
         }
 
