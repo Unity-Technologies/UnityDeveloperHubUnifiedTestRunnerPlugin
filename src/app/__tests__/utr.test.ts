@@ -1,4 +1,3 @@
-import { assert } from 'chai'
 import { Utr, HistoryCallback } from '../Utr'
 import * as mock_spawn from 'mock_spawn';
 import { AppSettings } from '../AppSettings'
@@ -9,9 +8,9 @@ describe('UTR tests', () => {
             var { utr, spawn } = _makeUtr();
             utr.run('--foo=bar', () => { }, () => { });
             var firstCall = spawn.calls[0];
-            assert.equal('perl', firstCall.command);
-            assert.deepEqual(['utr.pl', '--foo=bar'], firstCall.args);
-            assert.deepEqual({ cwd: 'repo_root' }, firstCall.opts);
+            expect('perl').toEqual(firstCall.command);
+            expect(['utr.pl', '--foo=bar']).toEqual(firstCall.args);
+            expect({ cwd: 'repo_root' }).toEqual(firstCall.opts);
         })
 
         it('emits stdout', function (done) {
@@ -20,7 +19,7 @@ describe('UTR tests', () => {
             var { utr, spawn } = _makeUtr();
             spawn.setDefault(spawn.simple(exitCode, stdOut));
             utr.run('--foo=bar', (line: string) => {
-                assert.equal(line, stdOut);
+                expect(line).toEqual(stdOut);
                 done();
             }, () => { });
         });
@@ -33,7 +32,7 @@ describe('UTR tests', () => {
             utr.run('--foo=bar',
                 () => { },
                 (line: string) => {
-                    assert.equal(line, stdErr);
+                    expect(line).toEqual(stdErr);
                     done();
                 });
         });
@@ -44,9 +43,9 @@ describe('UTR tests', () => {
             var { utr, spawn } = _makeUtr();
             utr.history((histEntries: Array<string>) => {
                 var call = spawn.calls[0];
-                assert.equal(call.command, 'perl');
-                assert.deepEqual(call.args, ['Tools/UnifiedTestRunner/history.pl']);
-                assert.deepEqual(call.opts, { cwd: AppSettings.repositoryRoot });
+                expect(call.command).toEqual('perl');
+                expect(call.args).toEqual(['Tools/UnifiedTestRunner/history.pl']);
+                expect(call.opts).toEqual({ cwd: AppSettings.repositoryRoot });
                 done();
             });
         });
@@ -55,7 +54,7 @@ describe('UTR tests', () => {
             var { utr, spawn } = _makeUtr();
             spawn.setDefault(spawn.simple(0, '["command_line_text"]'));
             utr.history((histEntries: Array<string>) => {
-                assert.deepEqual(histEntries, ['command_line_text']);
+                expect(histEntries).toEqual(['command_line_text']);
                 done();
             });
         });

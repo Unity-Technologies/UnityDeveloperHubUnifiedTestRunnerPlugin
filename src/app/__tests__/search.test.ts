@@ -1,7 +1,6 @@
 
 import * as request from 'request'
 import { Search, SuggestionSearchRequest } from '../Search'
-import { assert } from 'chai'
 import * as sinon from 'sinon'
 
 describe('Suggestions tests', () => {
@@ -22,7 +21,7 @@ describe('Suggestions tests', () => {
         };
 
         Search.suggest(req, (err, result) => {
-            assert.deepEqual(result, []);
+            expect(result).toEqual([]);
             done();
         });
     });
@@ -35,7 +34,7 @@ describe('Suggestions tests', () => {
             keywords: ['integration'],
         };
         Search.suggest(req, (err, result) => {
-            assert.deepEqual(result, []);
+            expect(result).toEqual([]);
             done();
         });
     });
@@ -47,7 +46,7 @@ describe('Suggestions tests', () => {
         };
 
         Search.suggest(req, (err, result) => {
-            assert.deepEqual(result, [
+            expect(result).toEqual([
                 {
                     "cmd": "--suite=native",
                 }
@@ -62,7 +61,7 @@ describe('Suggestions tests', () => {
             data: [{ "cmd": "--suite=native --category=performance" }]
         }
         Search.suggest(req, (err, result) => {
-            assert.deepEqual(result, [{ "cmd": "--suite=native --category=performance" }]);
+            expect(result).toEqual([{ "cmd": "--suite=native --category=performance" }]);
             done();
         });
     });
@@ -81,7 +80,7 @@ describe('Suggestions tests', () => {
             null, null, JSON.stringify(response));
 
         Search.suggest(req, (err, result) => {
-            assert.deepEqual(result, [{ cmd: "--suite=runtime --testfilter=WWWWorks" }]);
+            expect(result).toEqual([{ cmd: "--suite=runtime --testfilter=WWWWorks" }]);
             done();
         });
     });
