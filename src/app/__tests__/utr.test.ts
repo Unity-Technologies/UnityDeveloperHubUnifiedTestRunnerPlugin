@@ -36,6 +36,16 @@ describe('UTR tests', () => {
                     done();
                 });
         });
+
+        it('emits runComplete', function(done) {
+            var { utr, spawn } = _makeUtr();
+            var exitCodeExpectedValue = 1;
+            spawn.setDefault(spawn.simple(exitCodeExpectedValue));
+            utr.run('--foo=bar', () => {}, () => {}, (exitCode: number) => {
+                expect(exitCode).toEqual(exitCodeExpectedValue);
+                done()             
+            });
+        })
     })
 
     describe("history", () => {

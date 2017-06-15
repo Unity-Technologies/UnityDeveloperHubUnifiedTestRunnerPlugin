@@ -5,8 +5,9 @@ import { AppSettings } from "./AppSettings";
 var http = require('http');
 interface OutPutCallBack { (data: string): void }
 interface AutocompleteCallbak { (data: Array<string>): void }
-export interface HistoryCallback { (data: Array<string>): void }
+interface RunCompletecallback { (exitCode: number): void }
 
+export interface HistoryCallback { (data: Array<string>): void }
 
 export class Utr {
     private repositoryRoot: string;
@@ -17,7 +18,8 @@ export class Utr {
         this.spawn = spawn;
     }
 
-    public run(cmd: string, stdout: OutPutCallBack, stderr: OutPutCallBack) {
+    public run(cmd: string, stdout: OutPutCallBack, 
+        stderr: OutPutCallBack, onRunComplete?: RunCompletecallback) {
         console.log(`utr run: ${cmd}`);
 
         var args: string[] = new Array<string>();
@@ -34,6 +36,12 @@ export class Utr {
 
         utrProc.stderr.on('data', (data) => {
             stderr(`${data}`);
+        });
+
+        utrProc.on('close', (exitCode) => {
+            if (onRunComplete != undefined) {
+                 onRunComplete(exitCode);
+            }
         });
     }
 
