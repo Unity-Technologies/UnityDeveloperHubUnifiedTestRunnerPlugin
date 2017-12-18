@@ -1,4 +1,3 @@
-
 import * as request from 'request'
 import { Search, SuggestionSearchRequest } from '../Search'
 import * as sinon from 'sinon'

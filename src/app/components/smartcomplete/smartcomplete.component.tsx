@@ -23,7 +23,9 @@ interface SmartCompleteState {
     suggestions: CommandLine[]
     searchedKeywords: string[]
     renderingParamsCompletions: boolean
-    selectedSuggestion: CommandLine
+    selectedSuggestion: CommandLine, 
+    lastKeyCode: number,
+    downTimer: Function
 }
 
 export class SmartComplete extends React.Component<SmartCompleteProps, SmartCompleteState> {
@@ -36,26 +38,53 @@ export class SmartComplete extends React.Component<SmartCompleteProps, SmartComp
             suggestions: [],
             searchedKeywords: [],
             renderingParamsCompletions: false,
-            selectedSuggestion: null
+            selectedSuggestion: null,
+            lastKeyCode: 0, 
+            downTimer: null
         };
     }
+
     private keyDown(event: React.FormEvent<any>) {
         const keyboardEvent = event.nativeEvent as KeyboardEvent;
+     
         if (keyboardEvent == null) {
             return;
         }
 
-        if (keyboardEvent.keyCode == 13) {
+        const lastKeyCode = keyboardEvent.keyCode;
+        const isEnter = keyboardEvent.keyCode == 13;
+        if (isEnter) {
             const value = this.state.value;
+            this.setState({
+                value: ''
+            });
             this.props.commandSelectedCallBack(this.state.value);
-
-            return;
+        } else {
+            const isTab = keyboardEvent.keyCode == 9;
+            if (isTab && this.state.lastKeyCode !== 9) {
+                var timer = setInterval(() => { 
+                    console.log ("tab reset")
+                    this.setState ({
+                        lastKeyCode : null
+                    });
+                    clearInterval(timer);
+                }, 500);
+            }
+            const isDoubleTab = isTab && this.state.lastKeyCode == 9;
+            if (isDoubleTab) {
+                console.log('Double tab');
+                const utr = new Utr(AppSettings.repositoryRoot, child_process.spawn);
+                utr.complete(this.state.value, this.completionsAvalaibe.bind(this));
+                this.setState ({
+                    lastKeyCode : null
+                });
+                return;
+            }
         }
 
-        if (keyboardEvent.ctrlKey && keyboardEvent.keyCode == 32) {
-            const utr = new Utr(AppSettings.repositoryRoot, child_process.spawn);
-            utr.complete(this.state.value, this.completionsAvalaibe.bind(this));
-        }
+        this.setState ({
+            lastKeyCode : keyboardEvent.keyCode
+        });
     }
 
     private completionsAvalaibe(completions: Array<string>): void {
@@ -190,8 +219,6 @@ export class SmartComplete extends React.Component<SmartCompleteProps, SmartComp
             }, callback);
         });
     }
-
-    
 
     protected adjustCompletionValueForInput(value: string, completion: string): string {
         var parts = value.split(' ');

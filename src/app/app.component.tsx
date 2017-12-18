@@ -13,6 +13,7 @@ export class App extends React.Component<any, {}> {
 
     private onCommandSelected(cmd: string) : void {
         const utr = new Utr(AppSettings.repositoryRoot, child_process.spawn);
+        this._log.append (`Running utr.pl ${cmd}`);
         utr.run(cmd, 
             this.onUtrStdOut.bind(this),
             this.onUtrStdErr.bind(this)
@@ -32,7 +33,7 @@ export class App extends React.Component<any, {}> {
             <ShadowDOM>
                 <div>
                     <style>{this.style}</style>
-                    <SmartComplete 
+                    <SmartComplete
                         commandSelectedCallBack={this.onCommandSelected.bind(this)} 
                     />
                     <Log ref={(c) => this._log = c}/>

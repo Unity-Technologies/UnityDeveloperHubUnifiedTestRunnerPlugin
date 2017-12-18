@@ -6,4 +6,5 @@ describe('Log component renders without crashes', () => {
     it('Renders without crashes', () => {
         render(<Log/>);
     });
-});
+})
+
